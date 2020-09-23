@@ -1,0 +1,436 @@
+definitions:
+  handle.setBelongDate:
+    properties:
+      belong_date:
+        example: "2006-01-02"
+        type: string
+      id:
+        example: 1
+        type: integer
+    type: object
+  handle.setCompleted:
+    properties:
+      completed:
+        example: true
+        type: boolean
+      id:
+        example: 1
+        type: integer
+    type: object
+  handle.setText:
+    properties:
+      id:
+        example: 1
+        type: integer
+      text:
+        example: 修改的内容
+        type: string
+    type: object
+  handle.userRegisterEmailKey:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  pojo.Note:
+    properties:
+      id:
+        type: integer
+      text:
+        example: text1
+        type: string
+      time_stamp:
+        type: integer
+      time_view:
+        type: string
+      title:
+        example: title1
+        type: string
+    type: object
+  pojo.UserLoginParam:
+    properties:
+      email:
+        example: 857951500@qq.com
+        type: string
+      pwd:
+        example: "123"
+        type: string
+      uid:
+        example: user1
+        type: string
+    type: object
+  pojo.UserRegisterParam:
+    properties:
+      code:
+        type: string
+      email:
+        example: 857951500@qq.com
+        type: string
+      pwd:
+        example: "123"
+        type: string
+      uid:
+        example: user1
+        type: string
+    required:
+    - email
+    type: object
+  pojo.Work:
+    properties:
+      belong_date:
+        description: 所属日期，精确到日，可以修改
+        type: string
+      belong_stamp:
+        description: 所属日期，精确到日，可以修改
+        type: integer
+      completed:
+        description: 已完成？
+        type: boolean
+      id:
+        type: integer
+      text:
+        type: string
+      time_stamp:
+        description: 创建时间
+        type: integer
+      time_view:
+        description: 创建时间
+        type: string
+    type: object
+  rsp.Page:
+    properties:
+      list:
+        description: 切片
+        type: object
+      total:
+        description: 数量
+        type: integer
+    type: object
+  rsp.Result:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+  v.Id:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /api/note/add:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: note对象
+        in: body
+        name: text
+        required: true
+        schema:
+          $ref: '#/definitions/pojo.Note'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: note新建
+      tags:
+      - 笔记
+  /api/note/del:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 要删除数据的id
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/v.Id'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: note删除
+      tags:
+      - 笔记
+  /api/note/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 当前页
+        in: query
+        name: page
+        type: integer
+      - description: 每页条数
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/rsp.Result'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/rsp.Page'
+                  - properties:
+                      list:
+                        $ref: '#/definitions/pojo.Note'
+                    type: object
+              type: object
+      summary: note分页数据
+      tags:
+      - 笔记
+  /api/note/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新成的对象
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/pojo.Note'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: note更新
+      tags:
+      - 笔记
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户登录参数
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/pojo.UserLoginParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: 登录
+      tags:
+      - 用户
+  /api/user/logout:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: 退出登录
+      tags:
+      - 用户
+  /api/user/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户注册参数
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/pojo.UserRegisterParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: 注册
+      tags:
+      - 用户
+  /api/user/registerEmailKey:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 邮箱验证码参数
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/handle.userRegisterEmailKey'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: 获取注册邮箱验证码
+      tags:
+      - 用户
+  /api/work/add:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: work对象
+        in: body
+        name: text
+        required: true
+        schema:
+          $ref: '#/definitions/pojo.Work'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: work新建
+      tags:
+      - work
+  /api/work/del:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 要删除数据的id
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/v.Id'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: work删除
+      tags:
+      - work
+  /api/work/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 当前页
+        in: query
+        name: page
+        type: integer
+      - description: 每页条数
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/rsp.Result'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/rsp.Page'
+                  - properties:
+                      list:
+                        $ref: '#/definitions/pojo.Work'
+                    type: object
+              type: object
+      summary: work分页数据
+      tags:
+      - work
+  /api/work/setBelongDate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 要修改数据的id
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/handle.setBelongDate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: work修改所属日期
+      tags:
+      - work
+  /api/work/setCompleted:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 要修改数据的id
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/handle.setCompleted'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: work修改状态
+      tags:
+      - work
+  /api/work/setText:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 要修改数据的id
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/handle.setText'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rsp.Result'
+      summary: work修改内容
+      tags:
+      - work
+swagger: "2.0"
